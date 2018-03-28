@@ -17,6 +17,7 @@ router.get("/", (req, res, next) => {
                         projectDescription: doc.projectDescription,
                         dimensions: doc.dimensions,
                         events: doc.events,
+                        customers:doc.customers,
                         _id: doc._id
                     };
                 })
@@ -50,7 +51,8 @@ router.post("/", (req, res, next) => {
                     projectDescription: result.projectDescription,
                     _id: result._id,
                     events: result.events,
-                    dimensions: result.dimensions
+                    dimensions: result.dimensions,
+                    customers:result.customers
                 }
             });
         })
@@ -105,6 +107,7 @@ res.status(500).json({
 });
 });
 */
+
 router.delete("/:projectId", (req,res,next) =>{
     const id = req.params.projectId;
     Project.remove({_id : id})
@@ -145,7 +148,7 @@ router.get("/P/:projectName", (req, res, next) => {
         });
 });
 
-router.post("/:projectId/addEvent/", (req, res, next) => {
+/*router.post("/:projectId/addEvent/", (req, res, next) => {
     const id = req.params.projectId;
 
     const project = new Project({
@@ -170,10 +173,37 @@ router.post("/:projectId/addEvent/", (req, res, next) => {
                 error: err
             });
         });
+});*/
+
+
+router.post("/:projectId/addEDC", (req, res, next) => {
+    const id = req.params.projectId;
+   //const updateOps = {};
+  //  for (const key of Object.keys(req.body)) {
+    //    updateOps[key] = req.body[key]
+   // }
+
+   const updateOps = {};
+  for (const ops of req.body) {
+    updateOps[ops.propName] = ops.value;
+  }
+Project.update({ _id: id }, { $push: updateOps})
+    .exec()
+    .then(result => {
+    res.status(200).json({
+    message: 'Event updated',
+    createdProject: {
+        events: result.events
+    }
 });
-
-
-
+})
+.catch(err => {
+    console.log(err);
+res.status(500).json({
+    error: err
+});
+});
+});
 
 
 module.exports = router;
