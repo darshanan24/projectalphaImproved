@@ -2,10 +2,9 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 
-
+const Project = require("../models/project");
 const RawEvent = require("../models/rawEvent");
 
-// Handle incoming GET requests to /events
 router.get("/", (req, res, next) => {
     RawEvent.find()
         .exec()
@@ -18,7 +17,8 @@ router.get("/", (req, res, next) => {
                         name: doc.name,
                         description: doc.description,
                         type: doc.type,
-                        source:doc.source,
+                        source: doc.source,
+                        projectId: doc.projectId
                     };
                 })
             });
@@ -31,17 +31,25 @@ router.get("/", (req, res, next) => {
 });
 
 
-router.post("/", (req, res, next) => {
+router.post("/", (req, res) => {
+    Project.findById(req.body.projectId)
+    .then(project => {
+     // if (!project) {
+      //  return res.status(404).json({
+       //   message: "Project not found"
+       // });
+     // }
     const rawEvent = new RawEvent({
         _id: new mongoose.Types.ObjectId(),
         name: req.body.name,
         description: req.body.description,
         type: req.body.type,
-        source: req.body.source
+        source: req.body.source,
+        projectId: req.body.project // just project and not projectId
     });
-    rawEvent
-        .save()
-        .then(result => {
+   return rawEvent.save() 
+    })
+    .then(result => {
             console.log(result);
             res.status(201).json({
                 message: "Created RAW EVENT successfully",
@@ -50,7 +58,8 @@ router.post("/", (req, res, next) => {
                     description: result.description,
                     type: result.type,
                     source: result.source,
-                    _id: result._id
+                    _id: result._id,
+                    projectId: result.projectId
                 }
             });
         })
@@ -86,6 +95,7 @@ router.get("/:rawEventId", (req, res, next) => {
         });
 });
 
+/*
 router.patch("/:rawEventId", (req, res, next) => {
     const id = req.params.rawEventId;
     const updateOps = {};
@@ -106,7 +116,7 @@ router.patch("/:rawEventId", (req, res, next) => {
             });
         });
 });
-
+*/
 router.delete("/:rawEventId", (req,res,next) =>{
     const id = req.params.rawEventId;
     RawEvent.remove({_id : id})
@@ -122,5 +132,29 @@ router.delete("/:rawEventId", (req,res,next) =>{
             });
         });
 });
+
+router.get("/R/:eventName", (req, res, next) => {
+    const name = req.query.name;
+    RawEvent.findOne(name)
+        .select('_id')
+        .exec()
+        .then(doc => {
+            console.log("From database", doc);
+            if (doc) {
+                res.status(200).json({
+                    rawEvent: doc,
+                });
+            } else {
+                res
+                    .status(404)
+                    .json({ message: "No valid entry found for provided name of Project" });
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({ error: err });
+        });
+});
+
 
 module.exports =router;

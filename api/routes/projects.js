@@ -191,11 +191,8 @@ Project.update({ _id: id }, { $push: updateOps})
     .exec()
     .then(result => {
     res.status(200).json({
-    message: 'Event updated',
-    createdProject: {
-        events: result.events
-    }
-});
+    message: 'Project updated',
+    });
 })
 .catch(err => {
     console.log(err);

@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 
 const projectRoutes = require("./api/routes/projects");
 //const eventRoutes = require("./api/routes/events");
-//const rawEventRoutes = require("./api/routes/rawEvents");
+const rawEventRoutes = require("./api/routes/rawEvents");
 
 //const dimensionRoutes = require("./api/routes/dimensions");
 
@@ -34,7 +34,7 @@ app.use((req, res, next) => {
 // Routes which should handle requests
 app.use("/projects", projectRoutes);
 //app.use("/events", eventRoutes);
-//app.use("/rawEvents", rawEventRoutes);
+app.use("/events/raw", rawEventRoutes);
 
 //app.use("/dimensions", dimensionRoutes);
 
