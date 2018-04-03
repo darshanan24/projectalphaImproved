@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
 const projectRoutes = require("./api/routes/projects");
-//const eventRoutes = require("./api/routes/events");
+const enrichedEventRoutes = require("./api/routes/enrichedEvents");
 const rawEventRoutes = require("./api/routes/rawEvents");
 
 //const dimensionRoutes = require("./api/routes/dimensions");
@@ -33,7 +33,7 @@ app.use((req, res, next) => {
 
 // Routes which should handle requests
 app.use("/projects", projectRoutes);
-//app.use("/events", eventRoutes);
+app.use("/events/enriched", enrichedEventRoutes);
 app.use("/events/raw", rawEventRoutes);
 
 //app.use("/dimensions", dimensionRoutes);
