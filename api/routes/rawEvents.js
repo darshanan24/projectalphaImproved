@@ -2,9 +2,11 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 
+//schema models to follow
 const Project = require("../models/project");
 const RawEvent = require("../models/rawEvent");
 
+//handling get requests
 router.get("/", (req, res, next) => {
     RawEvent.find()
         .exec()
@@ -32,24 +34,24 @@ router.get("/", (req, res, next) => {
 
 
 router.post("/", (req, res) => {
-    Project.findById(req.body.projectId)
-    .then(project => {
-     if (!project) {
-        return res.status(404).json({
-         message: "Project not found"
-       });
-      }
-    const rawEvent = new RawEvent({
-        _id: new mongoose.Types.ObjectId(),
-        name: req.body.name,
-        description: req.body.description,
-        type: req.body.type,
-        source: req.body.source,
-        projectId: req.body.project // just project and not projectId
-    });
-   return rawEvent.save() 
-    })
-    .then(result => {
+    Project.findById(req.body.projectId) // Projectid ll be taken from projects.js which inherits from model project.js
+        .then(project => {
+            if (!project) {
+                return res.status(404).json({
+                    message: "Project not found"
+                });
+            }
+            const rawEvent = new RawEvent({
+                _id: new mongoose.Types.ObjectId(),
+                name: req.body.name,
+                description: req.body.description,
+                type: req.body.type,
+                source: req.body.source,
+                projectId: req.body.project // just project and not projectId
+            });
+            return rawEvent.save()
+        })
+        .then(result => {
             console.log(result);
             res.status(201).json({
                 message: "Created RAW EVENT successfully",
@@ -95,6 +97,7 @@ router.get("/:rawEventId", (req, res, next) => {
         });
 });
 
+// the "patch" snippet might come in handy when we need to edit every parameter in api raw events
 /*
 router.patch("/:rawEventId", (req, res, next) => {
     const id = req.params.rawEventId;
@@ -117,22 +120,25 @@ router.patch("/:rawEventId", (req, res, next) => {
         });
 });
 */
-router.delete("/:rawEventId", (req,res,next) =>{
+
+router.delete("/:rawEventId", (req, res, next) => {
     const id = req.params.rawEventId;
-    RawEvent.remove({_id : id})
+    RawEvent.remove({ _id: id })
         .exec()
         .then(result =>
             res.status(200).json({
                 message: 'Raw Event deleted'
             }))
-        .catch(err =>{
+        .catch(err => {
             console.log(err);
             res.status(500).json({
-                error:err
+                error: err
             });
         });
 });
 
+
+// note the URL /R/<eventname> for raw events
 router.get("/R/:eventName", (req, res, next) => {
     const name = req.query.name;
     RawEvent.findOne(name)
@@ -157,4 +163,4 @@ router.get("/R/:eventName", (req, res, next) => {
 });
 
 
-module.exports =router;
+module.exports = router;

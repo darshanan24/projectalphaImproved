@@ -8,119 +8,79 @@ const EnrichedEvent = require("../models/enrichedEvent");
 // Handle incoming GET requests to /events
 router.get("/", (req, res, next) => {
     EnrichedEvent.find()
-    .exec()
-    .then(docs => {
-    res.status(200).json({
-    count: docs.length,
-    enrichedEvents: docs.map(doc => {
-        return {
-            _id: doc._id,
-            name: doc.name,
-            description: doc.description,
-            type: doc.type,
-            source:doc.source,
-            Eschema:doc.Eschema,
-            delimiter: doc.delimiter,
-            parentId: doc.parentId
-        };
-})
-});
-})
-.catch(err => {
-    res.status(500).json({
-    error: err
-});
-});
+        .exec()
+        .then(docs => {
+            res.status(200).json({
+                count: docs.length,
+                enrichedEvents: docs.map(doc => {
+                    return {
+                        _id: doc._id,
+                        name: doc.name,
+                        description: doc.description,
+                        type: doc.type,
+                        source: doc.source,
+                        Eschema: doc.Eschema,
+                        delimiter: doc.delimiter,
+                        parentId: doc.parentId
+                    };
+                })
+            });
+        })
+        .catch(err => {
+            res.status(500).json({
+                error: err
+            });
+        });
 });
 
 
 router.post("/", (req, res, next) => {
     Project.findById(req.body.projectId);
-   /* .then(project => {
-    if (!project) {
-    return res.status(404).json({
-        message: "Project not found"
+    /* .then(project => {
+     if (!project) {
+     return res.status(404).json({
+         message: "Project not found"
+     });
+     }*/ //one or the other day this code snippet might come in handy
+    const enrichedEvent = new EnrichedEvent({
+        _id: mongoose.Types.ObjectId(),
+        name: req.body.name,
+        projectId: req.body.project,
+        description: req.body.description,
+        type: req.body.type,
+        source: req.body.source,
+        Eschema: req.body.Eschema,
+        delimiter: req.body.delimiter,
+        parentId: req.body.parentId
     });
-}*/
-const enrichedEvent = new EnrichedEvent({
-    _id: mongoose.Types.ObjectId(),
-    name: req.body.name,
-    projectId: req.body.project,
-    description: req.body.description,
-    type: req.body.type,
-    source: req.body.source,
-    Eschema: req.body.Eschema,
-    delimiter: req.body.delimiter,
-    parentId: req.body.parentId
-});
- return enrichedEvent.save()
-//})
-.then(result => {
-    console.log(result);
-res.status(201).json({
-    message: "Event stored",
-    createdEvent: {
-        _id: result._id,
-        project: result.project,
-        name: result.name,
-        description: result.description,
-        type: result.type,
-        source: result.source,
-        Eschema: result.Eschema,
-        delimiter: result.delimiter,
-        parentId: result.parentId
-},
-});
-})
-.catch(err => {
-    console.log(err);
-res.status(500).json({
-    error: err
-});
-});
+    return enrichedEvent.save()
+        //})
+        .then(result => {
+            console.log(result);
+            res.status(201).json({
+                message: "Event stored",
+                createdEvent: {
+                    _id: result._id,
+                    project: result.project,
+                    name: result.name,
+                    description: result.description,
+                    type: result.type,
+                    source: result.source,
+                    Eschema: result.Eschema,
+                    delimiter: result.delimiter,
+                    parentId: result.parentId
+                },
+            });
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({
+                error: err
+            });
+        });
 });
 
-/*router.post("/", (req, res, next) => {
-    Project.findById(req.body.projectId)
-    .then(project => {
-    if (!project) {
-    return res.status(404).json({
-        message: "Project not found"
-    });
-}
-const event = new Event({
-    _id: mongoose.Types.ObjectId(),
-    eventName: req.body.eventName,
-    project: req.body.projectId,
-    eventDescription: req.body.eventDescription,
-    eventType: req.body.eventType,
-    eventSource: req.body.eventSource,
-    eventSchema: req.body.eventSchema
-});
-return event.save();
-})
-.then(result => {
-    console.log(result);
-res.status(201).json({
-    message: "Event stored",
-    createdEvent: {
-        _id: result._id,
-        project: result.project,
-        eventName: result.eventName,
-        eventDescription: result.eventDescription,
-        eventType: result.eventType,
-        eventSource: result.eventSource,
-        eventSchema: result.eventSchema
-},
-});
-})
-.catch(err => {
-    console.log(err);
-res.status(500).json({
-    error: err
-});
-});
-});*/                               // original written code for getting project id
+
 router.get("/:enrichedEventId", (req, res, next) => {
     const id = req.params.enrichedEventId;
     EnrichedEvent.findById(id)
@@ -143,18 +103,18 @@ router.get("/:enrichedEventId", (req, res, next) => {
         });
 });
 
-router.delete("/:enrichedEventId", (req,res,next) =>{
+router.delete("/:enrichedEventId", (req, res, next) => {
     const id = req.params.enrichedEventId;
-    EnrichedEvent.remove({_id : id})
+    EnrichedEvent.remove({ _id: id })
         .exec()
         .then(result =>
             res.status(200).json({
                 message: 'Enriched Event deleted'
             }))
-        .catch(err =>{
+        .catch(err => {
             console.log(err);
             res.status(500).json({
-                error:err
+                error: err
             });
         });
 });

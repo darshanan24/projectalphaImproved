@@ -17,7 +17,7 @@ router.get("/", (req, res, next) => {
                         projectDescription: doc.projectDescription,
                         dimensions: doc.dimensions,
                         events: doc.events,
-                        customers:doc.customers,
+                        customers: doc.customers,
                         _id: doc._id
                     };
                 })
@@ -37,7 +37,7 @@ router.post("/", (req, res, next) => {
         _id: new mongoose.Types.ObjectId(),
         projectName: req.body.projectName,
         projectDescription: req.body.projectDescription,
-        dimensions:req.body.dimensions,
+        dimensions: req.body.dimensions,
         events: req.body.events
     });
     project
@@ -52,7 +52,7 @@ router.post("/", (req, res, next) => {
                     _id: result._id,
                     events: result.events,
                     dimensions: result.dimensions,
-                    customers:result.customers
+                    customers: result.customers
                 }
             });
         })
@@ -66,30 +66,31 @@ router.post("/", (req, res, next) => {
 
 router.get("/:projectId", (req, res, next) => {
     const id = req.params.projectId;
-Project.findById(id)
-    .exec()
-    .then(doc => {
-    console.log("From database", doc);
-if (doc) {
-    res.status(200).json({
-        project: doc,
-    });
-} else {
-    res
-        .status(404)
-        .json({ message: "No valid entry found for provided ID" });
-}
-})
-.catch(err => {
-    console.log(err);
-res.status(500).json({ error: err });
+    Project.findById(id)
+        .exec()
+        .then(doc => {
+            console.log("From database", doc);
+            if (doc) {
+                res.status(200).json({
+                    project: doc,
+                });
+            } else {
+                res.status(404)
+                    .json({ message: "No valid entry found for provided ID" });
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({ error: err });
+        });
 });
-});
+
+// the "patch" snippet might come in handy when we need to edit every parameter in api Projects
 /*
 router.patch("/:projectId", (req, res, next) => {
     const id = req.params.projectId;
 const updateOps = {};
-    for (const key of Object.keys(req.body)) {//for (const ops of req.body) {updateOps[ops.propName] = ops.value;}
+    for (const key of Object.keys(req.body)) {
         updateOps[key] = req.body[key]
     }
 Project.update({ _id: id }, { $set: updateOps })
@@ -108,18 +109,18 @@ res.status(500).json({
 });
 */
 
-router.delete("/:projectId", (req,res,next) =>{
+router.delete("/:projectId", (req, res, next) => {
     const id = req.params.projectId;
-    Project.remove({_id : id})
+    Project.remove({ _id: id })
         .exec()
         .then(result =>
-        res.status(200).json({
-            message: 'Project deleted'
-        }))
-        .catch(err =>{
+            res.status(200).json({
+                message: 'Project deleted'
+            }))
+        .catch(err => {
             console.log(err);
             res.status(500).json({
-                error:err
+                error: err
             });
         });
 });
@@ -148,23 +149,18 @@ router.get("/P/:projectName", (req, res, next) => {
         });
 });
 
-/*router.post("/:projectId/addEvent/", (req, res, next) => {
-    const id = req.params.projectId;
 
-    const project = new Project({
-        event_id: new mongoose.Types.ObjectId(),
-        events: req.body.events
-    });
-    project
-        .save()
+router.post("/:projectId/addEDC", (req, res, next) => {
+    const id = req.params.projectId;
+    const updateOps = {};
+    for (const ops of req.body) {
+        updateOps[ops.propName] = ops.value;
+    }
+    Project.update({ _id: id }, { $push: updateOps })
+        .exec()
         .then(result => {
-            console.log(result);
-            res.status(201).json({
-                message: "Created Event successfully",
-                createdProject: {
-                    event_id : result.event_id,
-                    events: result.events
-                }
+            res.status(200).json({
+                message: 'Project updated',
             });
         })
         .catch(err => {
@@ -173,33 +169,6 @@ router.get("/P/:projectName", (req, res, next) => {
                 error: err
             });
         });
-});*/
-
-
-router.post("/:projectId/addEDC", (req, res, next) => {
-    const id = req.params.projectId;
-   //const updateOps = {};
-  //  for (const key of Object.keys(req.body)) {
-    //    updateOps[key] = req.body[key]
-   // }
-
-   const updateOps = {};
-  for (const ops of req.body) {
-    updateOps[ops.propName] = ops.value;
-  }
-Project.update({ _id: id }, { $push: updateOps})
-    .exec()
-    .then(result => {
-    res.status(200).json({
-    message: 'Project updated',
-    });
-})
-.catch(err => {
-    console.log(err);
-res.status(500).json({
-    error: err
-});
-});
 });
 
 
