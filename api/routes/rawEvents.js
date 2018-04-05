@@ -34,11 +34,11 @@ router.get("/", (req, res, next) => {
 router.post("/", (req, res) => {
     Project.findById(req.body.projectId)
     .then(project => {
-     // if (!project) {
-      //  return res.status(404).json({
-       //   message: "Project not found"
-       // });
-     // }
+     if (!project) {
+        return res.status(404).json({
+         message: "Project not found"
+       });
+      }
     const rawEvent = new RawEvent({
         _id: new mongoose.Types.ObjectId(),
         name: req.body.name,

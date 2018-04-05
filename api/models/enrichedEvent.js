@@ -32,7 +32,7 @@ const enrichedEventSchema = mongoose.Schema({
     source: { type: String, required: true },
     //Eschema: { type: [delSchema,jsSchema,fwSchema],enum: ["delSchema","jsSchema","fwSchema"], required:false },
     //Eschema: { type: String,enum: ["delSchema","jsSchema","fwSchema"], required:false },
-    Eschema:  [delSchema],
+    Eschema:  [] ,
     parentId: {type: String, required: true},
     delimiter:{type: String, required: true}
 });
