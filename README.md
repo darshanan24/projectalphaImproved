@@ -16,7 +16,7 @@ Since i have included all the required modules and dependencies in package.json 
 
 * Database configuration
 
-+// Connection URL
+// Connection URL
 +const url = 'mongodb://localhost:27017/test'; // test is database name
 
 * How to run server
