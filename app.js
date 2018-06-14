@@ -5,9 +5,10 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 //routing to different apis
 const projectRoutes = require("./api/routes/projects");
+const profileRoutes = require("./api/routes/profiles");
 const enrichedEventRoutes = require("./api/routes/enrichedEvents");
 const rawEventRoutes = require("./api/routes/rawEvents");
-
+//const kafkadataRoutes = require("./api/routes/confluentkafkadata");
 //connection to mongo db, db name is test
 mongoose.connect("mongodb://127.0.0.1:27017/test");
 //to avoid depricated warning
@@ -32,9 +33,10 @@ app.use((req, res, next) => {
 
 // Routes which should handle requests
 app.use("/projects", projectRoutes);  //base path for projects
+app.use("/profiles", profileRoutes);
 app.use("/events/enriched", enrichedEventRoutes);  //base path for Enriched Event
 app.use("/events/raw", rawEventRoutes);  //base path for Raw Event
-
+//app.use("/confluent/kafka",kafkadataRoutes);
 // applicable to all apis
 app.use((req, res, next) => {
     const error = new Error("Not found");

@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 
 const Project = require("../models/project");
 const EnrichedEvent = require("../models/enrichedEvent");
+const shell = require("shelljs");
 
 // Handle incoming GET requests to /events
 router.get("/", (req, res, next) => {
@@ -35,17 +36,10 @@ router.get("/", (req, res, next) => {
 
 
 router.post("/", (req, res, next) => {
-    Project.findById(req.body.projectId);
-    /* .then(project => {
-     if (!project) {
-     return res.status(404).json({
-         message: "Project not found"
-     });
-     }*/ //one or the other day this code snippet might come in handy
     const enrichedEvent = new EnrichedEvent({
         _id: mongoose.Types.ObjectId(),
         name: req.body.name,
-        projectId: req.body.project,
+        projectId: req.body.projectId,
         description: req.body.description,
         type: req.body.type,
         source: req.body.source,
@@ -53,15 +47,15 @@ router.post("/", (req, res, next) => {
         delimiter: req.body.delimiter,
         parentId: req.body.parentId
     });
+
     return enrichedEvent.save()
-        //})
         .then(result => {
             console.log(result);
             res.status(201).json({
                 message: "Event stored",
                 createdEvent: {
                     _id: result._id,
-                    project: result.project,
+                    projectId: result.projectId,
                     name: result.name,
                     description: result.description,
                     type: result.type,
@@ -69,8 +63,24 @@ router.post("/", (req, res, next) => {
                     Eschema: result.Eschema,
                     delimiter: result.delimiter,
                     parentId: result.parentId
-                },
+                }
             });
+
+            console.log("projectid " +result.projectId );
+
+            Project.findOneAndUpdate({ _id: result.projectId},
+            { $push: { enrichedEvents:  result._id} },
+            function (error, success) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log(success);
+                }
+            });    
+            const host = "localhost:2181";
+            const topic = "/opt/kafka_2.11-1.0.0/bin/kafka-topics.sh --create --zookeeper " + host +" --replication-factor 1 --partitions 1 --topic " + result.name;
+            shell.exec(topic);
+            shell.exec('/opt/kafka_2.11-1.0.0/bin/kafka-topics.sh --list --zookeeper ' + host);
         })
         .catch(err => {
             console.log(err);
@@ -119,7 +129,7 @@ router.delete("/:enrichedEventId", (req, res, next) => {
         });
 });
 
-router.get("/E/:eventName", (req, res, next) => {
+router.get("/E/:character?", (req, res, next) => {
     const name = req.query.name;
     EnrichedEvent.findOne(name)
         .select('_id')
@@ -141,6 +151,5 @@ router.get("/E/:eventName", (req, res, next) => {
             res.status(500).json({ error: err });
         });
 });
-
 
 module.exports = router;

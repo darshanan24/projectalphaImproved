@@ -1,7 +1,7 @@
 const express = require("express");
-
 const router = express.Router();
 const mongoose = require("mongoose");
+//const query = require('url').query;
 
 const Project = require("../models/project");
 
@@ -16,7 +16,8 @@ router.get("/", (req, res, next) => {
                         projectName: doc.projectName,
                         projectDescription: doc.projectDescription,
                         dimensions: doc.dimensions,
-                        events: doc.events,
+                        events: doc.events ,
+                        enrichedEvents: doc.enrichedEvents,
                         customers: doc.customers,
                         _id: doc._id
                     };
@@ -24,6 +25,23 @@ router.get("/", (req, res, next) => {
             };
             res.status(200).json(response);
         })
+        next(Project.findOne(doc.projectName)
+        .select('_id')
+        .exec()
+        .then(doc => {
+            console.log("From database", doc);
+            if (doc) {
+                res.status(200).json({
+                    project: doc,
+                });
+            } else {
+                res
+                    .status(404)
+                    .json({ message: "No valid entry found for provided name of Project" });
+            }
+            console.log(projectName);
+        })
+    )
         .catch(err => {
             console.log(err);
             res.status(500).json({
@@ -31,14 +49,15 @@ router.get("/", (req, res, next) => {
             });
         });
 });
-
+ 
 router.post("/", (req, res, next) => {
     const project = new Project({
         _id: new mongoose.Types.ObjectId(),
         projectName: req.body.projectName,
         projectDescription: req.body.projectDescription,
         dimensions: req.body.dimensions,
-        events: req.body.events
+        events: req.body.events,
+        enrichedEvents: req.body.enrichedEvents
     });
     project
         .save()
@@ -51,6 +70,7 @@ router.post("/", (req, res, next) => {
                     projectDescription: result.projectDescription,
                     _id: result._id,
                     events: result.events,
+                    enrichedEvents: result.enrichedEvents,
                     dimensions: result.dimensions,
                     customers: result.customers
                 }
@@ -85,29 +105,6 @@ router.get("/:projectId", (req, res, next) => {
         });
 });
 
-// the "patch" snippet might come in handy when we need to edit every parameter in api Projects
-/*
-router.patch("/:projectId", (req, res, next) => {
-    const id = req.params.projectId;
-const updateOps = {};
-    for (const key of Object.keys(req.body)) {
-        updateOps[key] = req.body[key]
-    }
-Project.update({ _id: id }, { $set: updateOps })
-    .exec()
-    .then(result => {
-    res.status(200).json({
-    message: 'Project updated'
-});
-})
-.catch(err => {
-    console.log(err);
-res.status(500).json({
-    error: err
-});
-});
-});
-*/
 
 router.delete("/:projectId", (req, res, next) => {
     const id = req.params.projectId;
@@ -126,8 +123,9 @@ router.delete("/:projectId", (req, res, next) => {
 });
 
 
-router.get("/P/:projectName", (req, res, next) => {
+router.get("/", (req, res, next) => {
     const projectName = req.query.projectName;
+    console.log(req.query);
     Project.findOne(projectName)
         .select('_id')
         .exec()
@@ -142,6 +140,7 @@ router.get("/P/:projectName", (req, res, next) => {
                     .status(404)
                     .json({ message: "No valid entry found for provided name of Project" });
             }
+            console.log(projectName);
         })
         .catch(err => {
             console.log(err);

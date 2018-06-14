@@ -47,7 +47,7 @@ router.post("/", (req, res) => {
                 description: req.body.description,
                 type: req.body.type,
                 source: req.body.source,
-                projectId: req.body.project // just project and not projectId
+                projectId: req.body.projectId // just project and not projectId
             });
             return rawEvent.save()
         })
