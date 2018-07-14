@@ -3,31 +3,23 @@ const router = express.Router();
 const mongoose = require("mongoose");
 
 const Project = require("../models/project");
+const JoinedEvent = require("../models/joinedEvent");
 const EnrichedEvent = require("../models/enrichedEvent");
-const shell = require("shelljs");
 
-router.get("/:projectId/events/enriched", (req, res, next) => {
+router.get("/:projectId/events/joinedEvents", (req, res, next) => {
     const projectId = req.params.projectId;
     console.log(projectId);
-    EnrichedEvent.find({"projectId" :projectId})
+    JoinedEvent.find({"projectId" :projectId})
         .exec()
         .then(docs => {
-            console.log("like "+ projectId);
             res.status(200).json({
-                count: docs.length,
-                enrichedEvents: docs.map(doc => {
-                    return {
-                        _id: doc._id,
-                        name: doc.name,
-                        description: doc.description,
-                        type: doc.type,
-                        source: doc.source,
-                        format: doc.format,
-                        delimiter: doc.delimiter,
-                        parentId: doc.parentId,
-                        projectId: doc.projectId,
-                        DataSource: doc.DataSource,
-                        columns: doc.columns
+            count: docs.length,
+            joinedEvents: docs.map(doc => {
+                return {
+                    _id: doc._id,
+                    name: doc.name,
+                    projectId: doc.projectId,
+                    joinConditions:doc.joinConditions
                     };
                 })
             });
@@ -40,27 +32,17 @@ router.get("/:projectId/events/enriched", (req, res, next) => {
 });
 
 
-            
- 
 
-
-router.post("/:projectId/events/enriched", (req, res, next) => {
-    const enrichedEvent = new EnrichedEvent({
+router.post("/:projectId/events/joinedEvents", (req, res, next) => {
+    const joinedEvent = new JoinedEvent({
         _id: mongoose.Types.ObjectId(),
         name: req.body.name,
         projectId: req.params.projectId, //taking from url
-        description: req.body.description,
-        type: req.body.type,
-        source: req.body.source,
-        delimiter: req.body.delimiter,
-        parentId: req.body.parentId,
-        format: req.body.format,
-        columns:req.body.columns,
-        positions: req.body.positions
+        joinConditions: req.body.joinConditions
 
     });
 
-    return enrichedEvent.save()
+    return joinedEvent.save()
         .then(result => {
             console.log(result);
             res.status(201).json({
@@ -69,30 +51,22 @@ router.post("/:projectId/events/enriched", (req, res, next) => {
                     _id: result._id,
                     projectId: result.projectId,
                     name: result.name,
-                    description: result.description,
-                    type: result.type,
-                    source: result.source,
-                    delimiter: result.delimiter,
-                    parentId: result.parentId,
-                    columns:result.columns,
-                    positions:result.positions,
-                    format:result.format
+                    joinConditions:result.joinConditions
                 }
             });
 
             console.log("projectid " +result.projectId );
 
             Project.findOneAndUpdate({ _id: result.projectId},
-                { $push: { enrichedEvents:  result._id} },
-              );   
-            //KafkaCreateTopic(result.name);
-            console.log(result.name);
-            const host = "localhost:2181";
-            const topic = "/opt/kafka_2.11-1.0.0/bin/kafka-topics.sh --create --zookeeper " + host +" --replication-factor 1 --partitions 1 --topic " + result.name;
-            shell.exec(topic);
-            shell.exec('/opt/kafka_2.11-1.0.0/bin/kafka-topics.sh --list --zookeeper ' + host);
-
-        })
+                { $push: { joinedEvents:  result._id} },
+                function (error, success) {
+                    if (error) {
+                        console.log(error);
+                    } else {
+                        console.log(success);
+                    }
+                });   
+            })
         .catch(err => {
             console.log(err);
             res.status(500).json({
@@ -101,21 +75,21 @@ router.post("/:projectId/events/enriched", (req, res, next) => {
         });
 });
 
-router.get("/:projectId/event/enriched/:enrichedEventId", (req, res, next) => {
+router.get("/:projectId/events/joinedEvent/:joinedEventId", (req, res, next) => {
     const projectId = req.params.projectId;
-    const id = req.params.enrichedEventId;
+    const id = req.params.joinedEventId;
     console.log("---------" + projectId);
     Project.findById(projectId)
     .exec()
     .then(project =>{
     if(project) {
-    EnrichedEvent.findById(id)
+    JoinedEvent.findById(id)
         .exec()
         .then(doc => {
             console.log("doc.projectId "+doc);
             if (doc.projectId == project.id) {
                 res.status(200).json({
-                    enrichedEvent: doc,
+                    joinedEvent: doc,
                 })
             } else {
                 res.status(404)
@@ -136,20 +110,18 @@ router.get("/:projectId/event/enriched/:enrichedEventId", (req, res, next) => {
 });
 
 
-
-router.delete("/:projectId/event/enriched/:enrichedEventId", (req, res, next) => {
-    const enrichedEventId = req.params.enrichedEventId;
-    const projectId= req.params.projectId;
-    console.log(enrichedEventId);
+router.delete("/:projectId/events/joinedEvent/:joinedEventId", (req, res, next) => {
+    const projectId = req.params.projectId;
+    const joinedEventId = req.params.joinedEventId;
     console.log(projectId);
     Project.findOneAndUpdate({ _id: projectId},
-            { $pull: { enrichedEvents:  enrichedEventId} })
+            { $pull: { joinedEvents:  joinedEventId} })
     .exec()
     .then(project =>{
     if(project) {
         console.log("--------------");
-        console.log(enrichedEventId);
-      EnrichedEvent.remove({ _id: enrichedEventId })
+        console.log(joinedEventId);
+      JoinedEvent.remove({ _id: joinedEventId })
         .exec()
         .then(result => {
             if (result.n === 0 ){
@@ -174,7 +146,8 @@ router.delete("/:projectId/event/enriched/:enrichedEventId", (req, res, next) =>
         });
 });
 
-router.get("/:projectId/event/enriched", (req, res, next) => {
+
+router.get("/:projectId/events/joinedEvent", (req, res, next) => {
     const projectId = req.params.projectId;
     const name = req.query.name;
     console.log(projectId);
@@ -183,12 +156,12 @@ router.get("/:projectId/event/enriched", (req, res, next) => {
     .exec()
     .then(project =>{
     if(project) {
-    EnrichedEvent.find({'name':name})
+    JoinedEvent.find({'name':name})
         .exec()
         .then(doc => {
             if (doc[0].projectId == project.id) {
                 res.status(200).json({
-                    enrichedEvent: doc,
+                    joinedEvent: doc,
                 })
             } else {
                 res.status(404)
@@ -209,7 +182,6 @@ router.get("/:projectId/event/enriched", (req, res, next) => {
         });
     });
 });
-
 
 
 

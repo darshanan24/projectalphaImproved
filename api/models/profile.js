@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
 const Metric = mongoose.Schema({
-    //_id: false,
     Name: String,
     ColoumnName: String,
     GroupBy: String,

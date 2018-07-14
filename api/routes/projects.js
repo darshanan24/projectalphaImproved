@@ -5,43 +5,30 @@ const mongoose = require("mongoose");
 
 const Project = require("../models/project");
 
-router.get("/", (req, res, next) => {
+router.get("/projects/v1", (req, res, next) => {
     Project.find()
         .exec()
         .then(docs => {
+            console.log(docs);
             const response = {
                 count: docs.length,
                 projects: docs.map(doc => {
                     return {
-                        projectName: doc.projectName,
-                        projectDescription: doc.projectDescription,
+                        projectName: doc.name,
+                        description: doc.description,
                         dimensions: doc.dimensions,
-                        events: doc.events ,
+                        rawEvents: doc.rawEvents ,
                         enrichedEvents: doc.enrichedEvents,
                         customers: doc.customers,
+                        dataSources:doc.dataSources,
+                        description: doc.description,
+                        joinedEvetns: doc.joinedEvents,
                         _id: doc._id
                     };
                 })
             };
             res.status(200).json(response);
         })
-        next(Project.findOne(doc.projectName)
-        .select('_id')
-        .exec()
-        .then(doc => {
-            console.log("From database", doc);
-            if (doc) {
-                res.status(200).json({
-                    project: doc,
-                });
-            } else {
-                res
-                    .status(404)
-                    .json({ message: "No valid entry found for provided name of Project" });
-            }
-            console.log(projectName);
-        })
-    )
         .catch(err => {
             console.log(err);
             res.status(500).json({
@@ -49,15 +36,33 @@ router.get("/", (req, res, next) => {
             });
         });
 });
+
+router.get("/project/v1", (req, res, next) => {
+    const name = req.query.name;
+    Project.find({ 'name': name })
+        .exec()
+        .then(docs => {
+                console.log(docs[0].name + "----" + req.query.name);
+                res.status(200).json({project:docs});
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(403).json({
+                error: "FORBIDDEN:projectname doesnt exists"
+            });
+        });
+});
  
-router.post("/", (req, res, next) => {
+router.post("/projects/v1", (req, res, next) => {
     const project = new Project({
         _id: new mongoose.Types.ObjectId(),
-        projectName: req.body.projectName,
-        projectDescription: req.body.projectDescription,
+        name: req.body.name,
+        description: req.body.description,
         dimensions: req.body.dimensions,
         events: req.body.events,
-        enrichedEvents: req.body.enrichedEvents
+        enrichedEvents: req.body.enrichedEvents,
+        customers:req.body.customers,
+        dataSources:req.body.dataSources
     });
     project
         .save()
@@ -66,13 +71,14 @@ router.post("/", (req, res, next) => {
             res.status(201).json({
                 message: "Created project successfully",
                 createdProject: {
-                    projectName: result.projectName,
-                    projectDescription: result.projectDescription,
+                    name: result.name,
+                    description: result.description,
                     _id: result._id,
-                    events: result.events,
+                    rawEvents: result.rawEvents,
                     enrichedEvents: result.enrichedEvents,
                     dimensions: result.dimensions,
-                    customers: result.customers
+                    customers: result.customers,
+                    dataSources:result.dataSources
                 }
             });
         })
@@ -84,7 +90,7 @@ router.post("/", (req, res, next) => {
         });
 });
 
-router.get("/:projectId", (req, res, next) => {
+router.get("/project/v1/:projectId", (req, res, next) => {
     const id = req.params.projectId;
     Project.findById(id)
         .exec()
@@ -106,14 +112,17 @@ router.get("/:projectId", (req, res, next) => {
 });
 
 
-router.delete("/:projectId", (req, res, next) => {
+router.delete("/project/v1/:projectId", (req, res, next) => {
     const id = req.params.projectId;
     Project.remove({ _id: id })
         .exec()
-        .then(result =>
-            res.status(200).json({
-                message: 'Project deleted'
-            }))
+        .then(result =>{
+            if (result.n === 0) {
+                return res.status(404).json({ message: "ID not found" })
+              } else {
+                return res.status(200).json({ message: "event removed"})
+              }
+        })
         .catch(err => {
             console.log(err);
             res.status(500).json({
@@ -123,33 +132,10 @@ router.delete("/:projectId", (req, res, next) => {
 });
 
 
-router.get("/", (req, res, next) => {
-    const projectName = req.query.projectName;
-    console.log(req.query);
-    Project.findOne(projectName)
-        .select('_id')
-        .exec()
-        .then(doc => {
-            console.log("From database", doc);
-            if (doc) {
-                res.status(200).json({
-                    project: doc,
-                });
-            } else {
-                res
-                    .status(404)
-                    .json({ message: "No valid entry found for provided name of Project" });
-            }
-            console.log(projectName);
-        })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json({ error: err });
-        });
-});
+ 
 
 
-router.post("/:projectId/addEDC", (req, res, next) => {
+router.post("/project/v1/:projectId/addEDC", (req, res, next) => {
     const id = req.params.projectId;
     const updateOps = {};
     for (const ops of req.body) {
