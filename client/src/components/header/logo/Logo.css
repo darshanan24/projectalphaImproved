@@ -1,0 +1,23 @@
+.logo {
+  display: block;
+  margin: auto;
+  text-align: center;
+  img {
+    max-height: 36px;
+    margin: 12px auto;
+  }
+}
+
+.logo img {
+  max-height: 36px;
+  margin: 12px auto;
+}
+
+@media (max-width: 576px) {
+  .logo {
+    img {
+      max-height: 24px;
+      margin: 18px auto;
+    }
+  }
+}

@@ -1,0 +1,129 @@
+/*************** 1. Sass Variables ***************/
+/*************** 2.Mixins ***************/
+@font-face {
+  font-family: 'Open Sans';
+  src: url('./assets/fonts/opensans/opensans-bold-webfont.woff2')
+      format('woff2'),
+    url('./assets/fonts/opensans/opensans-bold-webfont.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Open Sans';
+  src: url('./assets/fonts/opensans/opensans-regular-webfont.woff2')
+      format('woff2'),
+    url('./assets/fonts/opensans/opensans-regular-webfont.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+/************************************************
+	************************************************
+										Body CSS
+	************************************************
+************************************************/
+html {
+  height: 100%;
+}
+
+body {
+  min-height: 100%;
+  position: relative;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font: normal 14px 'Open Sans', sans-serif;
+  color: #2e323c;
+  background: #f5f6fa;
+}
+body::-webkit-scrollbar {
+  width: 10px;
+}
+body::-webkit-scrollbar-track {
+  background: #e6e6e6;
+}
+body::-webkit-scrollbar-thumb {
+  background-color: #cccccc;
+  outline: 1px solid #cccccc;
+}
+body.boxed {
+  margin: 0 auto;
+  max-width: 1200px;
+  background: #000000;
+}
+body.boxed .app-header {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  left: inherit;
+  right: inherit;
+}
+body.boxed .main-footer {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  left: inherit;
+  right: inherit;
+}
+body.full-screen a.onoffcanvas-toggler {
+  display: inline-block;
+}
+body.full-screen .app-side {
+  left: 0;
+}
+body.full-screen .app-side.is-open {
+  left: -230px;
+}
+@media (max-width: 992px) {
+  body.full-screen .app-side {
+    left: -230px;
+  }
+  body.full-screen .app-side.is-open {
+    left: 0;
+  }
+}
+body.full-screen .app-main {
+  margin-left: 0;
+}
+@media (max-width: 1100px) {
+  body.off-canvas a.onoffcanvas-toggler {
+    display: inline-block;
+  }
+  body.off-canvas a.mini-nav-btn {
+    display: none;
+  }
+}
+
+/************************************************
+	************************************************
+										Common CSS
+	************************************************
+************************************************/
+a {
+  color: #333333;
+  text-decoration: none;
+}
+a:hover {
+  color: #000000;
+  text-decoration: none;
+}
+a:focus {
+  outline: none;
+  text-decoration: none;
+  color: #000000;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+}
+ul li {
+  list-style-type: none;
+}
+
+hr {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border-top: 1px solid #e1e5f1;
+}
