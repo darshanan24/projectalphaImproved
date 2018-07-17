@@ -1,0 +1,17 @@
+@media (max-width: 576px) {
+  .app-header {
+    position: inherit;
+  }
+}
+.app-container {
+  position: relative;
+  background: #f5f6fa;
+  top: 60px;
+  padding-bottom: 20px;
+}
+
+@media (max-width: 576px) {
+  .app-container {
+    top: inherit;
+  }
+}
