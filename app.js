@@ -3,14 +3,34 @@ const app = express();
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const session = require("express-session");
+const passport = require('passport');
+
 //routing to different apis
 const projectRoutes = require("./api/routes/projects");
 const profileRoutes = require("./api/routes/profiles");
 const enrichedEventRoutes = require("./api/routes/enrichedEvents");
 const rawEventRoutes = require("./api/routes/rawEvents");
+const dataSourcesRoutes = require("./api/routes/dataSources")
+const joinedEventRoutes = require("./api/routes/joinedEvents")
+const userRoutes = require("./api/routes/users");
 //const kafkadataRoutes = require("./api/routes/confluentkafkadata");
-//connection to mongo db, db name is test
-mongoose.connect("mongodb://127.0.0.1:27017/test");
+const config = require('./config/database');
+
+mongoose.connect(config.database);
+let db = mongoose.connection;
+
+// Check connection
+db.once('open', function(){
+  console.log('Connected to MongoDB');
+});
+
+// Check for DB errors
+db.on('error', function(err){
+  console.log(err);
+}); 
+//mongoose.connect("mongodb://127.0.0.1:27017/test");
+
 //to avoid depricated warning
 mongoose.Promise = global.Promise;
 // can Remove this app.use(morgan("dev")) before releasing to production 
@@ -31,11 +51,31 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use(session({
+    secret: 'keyboard cat',
+    resave: true,
+    saveUninitialized: true
+  }));
+// Passport Config
+require('./config/passport')(passport);
+// Passport Middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.get('*', function(req, res, next){
+  res.locals.user = req.user || null;
+  next();
+});
+
+
 // Routes which should handle requests
-app.use("/projects", projectRoutes);  //base path for projects
+app.use("/", projectRoutes);  //base path for projects
 app.use("/profiles", profileRoutes);
-app.use("/events/enriched", enrichedEventRoutes);  //base path for Enriched Event
-app.use("/events/raw", rawEventRoutes);  //base path for Raw Event
+app.use("/project/v1", enrichedEventRoutes);  //base path for Enriched Event
+app.use("/project/v1", rawEventRoutes);  //base path for Raw Event
+app.use("/project/v1",dataSourcesRoutes);
+app.use("/project/v1",joinedEventRoutes);
+app.use("/user", userRoutes);
 //app.use("/confluent/kafka",kafkadataRoutes);
 // applicable to all apis
 app.use((req, res, next) => {
