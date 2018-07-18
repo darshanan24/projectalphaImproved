@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Aux from '../Aux/Aux';
 import './Layout.css';
 import Header from '../header/Header';
-import Sidebar from '../Sidebar/Sidebar';
+import Sidebar from '../sidebar/Sidebar';
 import { BrowserRouter } from 'react-router-dom';
 
 const Dashboard = () => <h2>Dashbaord</h2>;

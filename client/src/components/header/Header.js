@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './Header.css';
 import Logo from './logo/Logo';
-import Sidebar from '../Sidebar/Sidebar';
+import Sidebar from '../sidebar/Sidebar';
 import Usernav from '../usernav/Usernav';
 class Header extends Component {
   render() {
