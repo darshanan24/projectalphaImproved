@@ -2,11 +2,29 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
+<<<<<<< HEAD
 const Project = require("../models/project");
+=======
+//const Project = require("../models/project");
+>>>>>>> master
 
 // Bring in User Model
 let User = require('../models/user');
 
+<<<<<<< HEAD
+=======
+// Register
+router.get('/register', function (req, res) {
+	res.render('register');
+});
+
+// Login
+router.get('/login', function (req, res) {
+	res.render('login');
+});
+
+
+>>>>>>> master
 // Register Proccess
 router.post('/register', function(req, res, next){
   const name = req.body.name;
