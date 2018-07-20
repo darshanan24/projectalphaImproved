@@ -1,6 +1,6 @@
 import React from 'react';
 import '../header/Header.css';
-import Avatar from '../../assets/images/user.png';
+import Avatar from '../../../assets/images/user.png';
 const Usernav = props => (
   <ul className="header-actions">
     <li className="dropdown">

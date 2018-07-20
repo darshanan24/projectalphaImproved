@@ -3,24 +3,21 @@ import { Switch, Route } from 'react-router-dom';
 import Login from './login/Login';
 import Layout from './Layout/Layout';
 import { BrowserRouter } from 'react-router-dom';
-import MainApp from './MainApp';
+import Project from './containers/Project/Project';
 
 const Dashboard = () => <h2>Dashbaord</h2>;
 const Landing = () => <h2>Landing</h2>;
 
-class App extends Component {
+class MainApp extends Component {
   render() {
     return (
       <div>
-        <Switch>
-          <div>
-            <Route exact={true} path="/" component={MainApp} />
-            <Route exact={true} path="/login" component={Login} />
-          </div>
-        </Switch>
+        <Layout>
+          <Project />
+        </Layout>
       </div>
     );
   }
 }
 
-export default App;
+export default MainApp;

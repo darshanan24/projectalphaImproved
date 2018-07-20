@@ -2,31 +2,23 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
-<<<<<<< HEAD
-const Project = require("../models/project");
-=======
 //const Project = require("../models/project");
->>>>>>> master
 
 // Bring in User Model
 let User = require('../models/user');
 
-<<<<<<< HEAD
-=======
 // Register
-router.get('/register', function (req, res) {
-	res.render('register');
+router.get('/register', function(req, res) {
+  res.render('register');
 });
 
 // Login
-router.get('/login', function (req, res) {
-	res.render('login');
+router.get('/login', function(req, res) {
+  res.render('login');
 });
 
-
->>>>>>> master
 // Register Proccess
-router.post('/register', function(req, res, next){
+router.post('/register', function(req, res, next) {
   const name = req.body.name;
   const email = req.body.email;
   const username = req.body.username;
@@ -36,47 +28,52 @@ router.post('/register', function(req, res, next){
   if (req.body.password !== password2) {
     var err = new Error('Passwords do not match.');
     err.status = 400;
-    res.send("passwords dont match");
+    res.send('passwords dont match');
     return next(err);
   }
 
-    let newUser = new User({
-      name:name,
-      email:email,
-      username:username,
-      password:password
-    });
+  let newUser = new User({
+    name: name,
+    email: email,
+    username: username,
+    password: password
+  });
 
-    bcrypt.genSalt(10, function(err, salt){
-      bcrypt.hash(newUser.password, salt, function(err, hash){
-        if(err){
+  bcrypt.genSalt(10, function(err, salt) {
+    bcrypt.hash(newUser.password, salt, function(err, hash) {
+      if (err) {
+        console.log(err);
+      }
+      newUser.password = hash;
+      newUser.save(function(err) {
+        if (err) {
           console.log(err);
+          return;
+        } else {
+          res.send('sucess');
+          //res.redirect('http://localhost:3000');
         }
-        newUser.password = hash;
-        newUser.save(function(err){
-          if(err){
-            console.log(err);
-            return;
-          } else {
-            res.redirect('/user/login');
-          }
-        });
       });
     });
-  }
-);
-
+  });
+});
 
 // Login Process
-router.post('/login', function(req, res, next){
+router.post('/login', function(req, res, next) {
   passport.authenticate('local', {
-    successRedirect:'/projects',
-    failureRedirect:'/user/login'
+    success: res.status(400).json({
+      success: true,
+      message: 'You have successfully logged in!'
+    }),
+    failure: res.status(400).json({
+      success: false,
+      message: 'Could not process the form.'
+    })
   })(req, res, next);
 });
 
 // logout
-router.get('/logout', function(req, res){
+router.get('/logout', function(req, res) {
   req.logout();
   res.redirect('/user/login');
 });

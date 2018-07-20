@@ -1,0 +1,44 @@
+.main-heading {
+  padding: 0.6rem 0.5rem;
+  background: #ffffff;
+  position: relative;
+  -webkit-box-shadow: 0 10px 20px -10px #dde1ee;
+  -moz-box-shadow: 0 10px 20px -10px #dde1ee;
+  box-shadow: 0 10px 20px -10px #dde1ee;
+  z-index: 10;
+}
+.main-heading .page-icon {
+  float: left;
+  border-right: 1px solid #e1e5f1;
+  padding-right: 10px;
+}
+.main-heading .page-icon i {
+  font-size: 24px;
+  color: #007ae1;
+  margin: 9px 6px 9px 0;
+  display: block;
+}
+.main-heading .page-title {
+  margin-left: 60px;
+}
+.main-heading .page-title h5 {
+  margin: 0;
+  padding: 0;
+  line-height: 120%;
+}
+.main-heading .page-title h6.sub-heading {
+  margin: 3px 0 0 0;
+  padding: 0;
+  font-size: 0.8rem;
+  color: #aab3c3;
+}
+.main-heading .right-actions {
+  float: right;
+  margin-top: 2px;
+}
+
+@media (max-width: 576px) {
+  .main-heading .right-actions {
+    display: none;
+  }
+}

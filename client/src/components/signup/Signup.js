@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import './Login.css';
-import Input from '../UI/Input/Input';
-import Logo from '../Navigation/header/logo/Logo';
+import './Signup.css';
+import Input from '../input/Input';
+import Logo from '../header/logo/Logo';
 import Button from '../Button/Button';
 import * as actions from '../../store/actions';
 
-class Login extends Component {
+class Signup extends Component {
   state = {
     controls: {
       username: {
@@ -77,8 +77,7 @@ class Login extends Component {
         valid: false,
         touched: false
       }
-    },
-    isSignup: true
+    }
   };
 
   checkValidity(value, rules) {
@@ -139,29 +138,19 @@ class Login extends Component {
       this.state.isSignup.value
     );
   };
-  switchAuthModeHandler = () => {
+  /*  switchAuthModeHandler = () => {
     this.setState(prevState => {
       return { isSignup: !prevState.isSignup };
     });
   };
+  */
 
   render() {
     const formElementsArray = [];
-    if (this.state.isSignup) {
-      for (let key in this.state.controls) {
-        formElementsArray.push({
-          id: key,
-          config: this.state.controls[key]
-        });
-      }
-    } else {
+    for (let key in this.state.controls) {
       formElementsArray.push({
-        id: 'username',
-        config: this.state.controls['username']
-      });
-      formElementsArray.push({
-        id: 'password',
-        config: this.state.controls['password']
+        id: key,
+        config: this.state.controls[key]
       });
     }
 
@@ -196,14 +185,8 @@ class Login extends Component {
                       <div className="or" />
                     </form>
                     <div className="mt-4">
-                      <Button
-                        clicked={this.switchAuthModeHandler}
-                        btnType="Danger"
-                      >
-                        {this.state.isSignup
-                          ? 'Already have an account ? SIGNIN'
-                          : 'Dont have an account ? SIGNUP'}
-                      </Button>
+                      'Already have an account ? SIGNIN' 'Dont have an account ?
+                      SIGNUP'
                     </div>
                   </div>
                 </div>
@@ -217,14 +200,12 @@ class Login extends Component {
 }
 const mapDispatchToProps = dispatch => {
   return {
-    onAuth: (username, name, email, password, password2, isSignup) =>
-      dispatch(
-        actions.auth(username, name, email, password, password2, isSignup)
-      )
+    onAuth: (username, name, email, password, password2) =>
+      dispatch(actions.auth(username, name, email, password, password2))
   };
 };
 
 export default connect(
   null,
   mapDispatchToProps
-)(Login);
+)(Signup);

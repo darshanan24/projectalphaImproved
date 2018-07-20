@@ -1,22 +1,36 @@
 import React, { Component } from 'react';
-import Aux from '../Aux/Aux';
+import Aux from '../hoc/Aux/Aux';
 import './Layout.css';
-import Header from '../header/Header';
-import Sidebar from '../sidebar/Sidebar';
+import Header from '../Navigation/header/Header';
+import SideDrawer from '../Navigation/SideDrawer/SideDrawer';
 import { BrowserRouter } from 'react-router-dom';
 
-const Dashboard = () => <h2>Dashbaord</h2>;
-const Landing = () => <h2>Landing</h2>;
-
 class Layout extends Component {
+  state = {
+    showSideDrawer: true
+  };
+
+  sideDrawerClosedHandler = () => {
+    this.setState({ showSideDrawer: false });
+  };
+
+  sideDrawerToggleHandler = () => {
+    this.setState(prevState => {
+      return { showSideDrawer: !prevState.showSideDrawer };
+    });
+  };
+
   render() {
     return (
       <Aux>
-        <Header />
+        <Header open={this.state.showSideDrawer} />
         <div className="app-container">
-          <Sidebar />
+          <SideDrawer
+            open={this.state.showSideDrawer}
+            closed={this.sideDrawerClosedHandler}
+          />
+          <div className="app-main">{this.props.children}</div>
         </div>
-        {this.props.children}
       </Aux>
     );
   }

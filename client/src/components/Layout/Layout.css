@@ -15,3 +15,120 @@
     top: inherit;
   }
 }
+
+.app-main {
+  position: relative;
+  -webkit-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+  margin-left: 230px;
+}
+.app-main.left-toggle {
+  margin-left: 0;
+}
+
+@media (min-width: 992px) {
+  .app-side.is-mini {
+    width: 65px;
+    left: 0;
+  }
+  .app-side.is-mini ~ .app-main {
+    margin-left: 65px;
+  }
+  .app-side.is-mini .unifyMenu > li.selected:after {
+    border-right: 11px solid transparent;
+  }
+  .app-side.is-mini .unifyMenu > li.selected:before {
+    border-right: 11px solid transparent;
+  }
+  .app-side.is-mini .unifyMenu > li.menu-header {
+    display: none;
+  }
+  .app-side.is-mini .unifyMenu > li > ul {
+    position: absolute;
+    top: 100%;
+    left: 100%;
+    display: none;
+  }
+  .app-side.is-mini .unifyMenu > li > ul > li > a {
+    padding: 0.5em 0.5em 0.5em 1.5em;
+  }
+  .app-side.is-mini .unifyMenu > li:hover > ul {
+    display: block;
+    min-width: 192px;
+    height: auto !important;
+    box-shadow: 2px 2px 0 2px #e4e7f2;
+  }
+  .app-side.is-mini .unifyMenu > li:hover > a {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: row;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    min-width: 257px;
+    color: #ffffff;
+    background: #007ae1;
+  }
+  .app-side.is-mini .unifyMenu > li:hover > a:active,
+  .app-side.is-mini .unifyMenu > li:hover > a:focus,
+  .app-side.is-mini .unifyMenu > li:hover > a:hover {
+    color: #ffffff;
+    background: #007ae1;
+  }
+  .app-side.is-mini .unifyMenu > li:hover .nav-title {
+    display: inline-block;
+    -webkit-align-self: center;
+    -ms-flex-item-align: center;
+    -ms-grid-row-align: center;
+    align-self: center;
+  }
+  .app-side.is-mini .unifyMenu > li:hover > .has-arrow::after {
+    border-width: 1px 0 0 1px;
+  }
+  .app-side.is-mini .unifyMenu > li > a.has-arrow::after {
+    border-width: 0;
+  }
+  .app-side.is-mini .unifyMenu li:last-child {
+    padding-bottom: 0;
+  }
+  .app-side.is-mini .unifyMenu ul ul a {
+    padding-left: 2.5rem;
+  }
+  .app-side.is-mini .nav-title {
+    display: none;
+  }
+  .app-side.is-mini .user-profile img.profile-thumb {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    -webkit-border-radius: 100px;
+    -moz-border-radius: 100px;
+    border-radius: 100px;
+    margin: 20px auto 10px auto;
+  }
+  .app-side.is-mini .user-profile h6.profile-name {
+    display: none;
+  }
+  .app-side.is-mini .user-profile .profile-actions {
+    display: none;
+  }
+}
+
+@media (max-width: 1100px) {
+  .app-main {
+    margin-left: 0;
+  }
+
+  .side-nav .unifyMenu > li.selected:after {
+    border-right: 0;
+  }
+}
+
+body.full-screen .app-main {
+  margin-left: 0;
+}

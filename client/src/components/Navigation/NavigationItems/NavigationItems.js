@@ -5,11 +5,15 @@ import NavigationItem from './NavigationItem/NavigationItem';
 
 const NavigationItems = () => (
   <ul className="unifyMenu">
-    <NavigationItem link="/" exact>
-      Burger Builder
+    <NavigationItem link="/" icon="icon-flash-outline">
+      Events
     </NavigationItem>
-    <NavigationItem link="/orders">Orders</NavigationItem>
-    <NavigationItem link="/auth">Authenticate</NavigationItem>
+    <NavigationItem link="/orders" icon="icon-flash-outline">
+      Dimensions
+    </NavigationItem>
+    <NavigationItem link="/auth" icon="icon-flash-outline">
+      Profile
+    </NavigationItem>
   </ul>
 );
 

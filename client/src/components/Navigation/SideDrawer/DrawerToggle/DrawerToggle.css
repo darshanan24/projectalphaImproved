@@ -1,0 +1,16 @@
+a.mini-nav-btn {
+  padding: 18px 20px 18px 5px;
+  display: inline-block;
+  border-right: 1px solid #e1e5f1;
+}
+a.mini-nav-btn i {
+  font-size: 24px;
+  vertical-align: middle;
+  color: #007ae1;
+}
+
+@media (max-width: 992px) {
+  a.mini-nav-btn {
+    display: none;
+  }
+}
