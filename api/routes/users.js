@@ -1,81 +1,117 @@
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcryptjs');
-const passport = require('passport');
-//const Project = require("../models/project");
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
-// Bring in User Model
-let User = require('../models/user');
+const User = require('../models/user');
 
-// Register
-router.get('/register', function(req, res) {
-  res.render('register');
-});
-
-// Login
-router.get('/login', function(req, res) {
-  res.render('login');
-});
-
-// Register Proccess
-router.post('/register', function(req, res, next) {
-  const name = req.body.name;
-  const email = req.body.email;
-  const username = req.body.username;
-  const password = req.body.password;
-  const password2 = req.body.password2;
-
-  if (req.body.password !== password2) {
+router.post('/signup', (req, res, next) => {
+  if (req.body.password !== req.body.passwordConfirm) {
     var err = new Error('Passwords do not match.');
     err.status = 400;
     res.send('passwords dont match');
     return next(err);
   }
 
-  let newUser = new User({
-    name: name,
-    email: email,
-    username: username,
-    password: password
-  });
-
-  bcrypt.genSalt(10, function(err, salt) {
-    bcrypt.hash(newUser.password, salt, function(err, hash) {
-      if (err) {
-        console.log(err);
+  User.find({ email: req.body.email })
+    .exec()
+    .then(user => {
+      if (user.length >= 1) {
+        return res.status(409).json({
+          message: 'Mail exists'
+        });
+      } else {
+        bcrypt.hash(req.body.password, 10, (err, hash) => {
+          if (err) {
+            return res.status(500).json({
+              error: err
+            });
+          } else {
+            const user = new User({
+              _id: new mongoose.Types.ObjectId(),
+              email: req.body.email,
+              password: hash,
+              username: req.body.username
+            });
+            user
+              .save()
+              .then(result => {
+                console.log(result);
+                res.status(201).json({
+                  message: 'User created'
+                });
+              })
+              .catch(err => {
+                console.log(err);
+                res.status(500).json({
+                  error: err
+                });
+              });
+          }
+        });
       }
-      newUser.password = hash;
-      newUser.save(function(err) {
+    });
+});
+
+router.post('/login', (req, res, next) => {
+  User.find({ email: req.body.email })
+    .exec()
+    .then(user => {
+      if (user.length < 1) {
+        return res.status(401).json({
+          message: 'Auth failed'
+        });
+      }
+      bcrypt.compare(req.body.password, user[0].password, (err, result) => {
         if (err) {
-          console.log(err);
-          return;
-        } else {
-          res.send('sucess');
-          //res.redirect('http://localhost:3000');
+          return res.status(401).json({
+            message: 'Auth failed'
+          });
         }
+        if (result) {
+          const token = jwt.sign(
+            {
+              email: user[0].email,
+              userId: user[0]._id
+            },
+            process.env.JWT_KEY,
+            {
+              expiresIn: '1h'
+            }
+          );
+          return res.status(200).json({
+            message: 'Auth successful',
+            token: token
+          });
+        }
+        res.status(401).json({
+          message: 'Auth failed'
+        });
+      });
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({
+        error: err
       });
     });
-  });
 });
 
-// Login Process
-router.post('/login', function(req, res, next) {
-  passport.authenticate('local', {
-    success: res.status(400).json({
-      success: true,
-      message: 'You have successfully logged in!'
-    }),
-    failure: res.status(400).json({
-      success: false,
-      message: 'Could not process the form.'
+router.delete('/:userId', (req, res, next) => {
+  User.remove({ _id: req.params.userId })
+    .exec()
+    .then(result => {
+      res.status(200).json({
+        message: 'User deleted'
+      });
     })
-  })(req, res, next);
-});
-
-// logout
-router.get('/logout', function(req, res) {
-  req.logout();
-  res.redirect('/user/login');
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({
+        error: err
+      });
+    });
 });
 
 module.exports = router;
