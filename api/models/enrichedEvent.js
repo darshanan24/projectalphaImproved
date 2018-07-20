@@ -1,14 +1,18 @@
 const mongoose = require('mongoose');
 
-const position = mongoose.Schema({
+const positionDel = mongoose.Schema({
     startIndex: { type: Number, required: true },
     endIndex: { type: Number, required: false },
+}); 
+const positionFixed = mongoose.Schema({
+    startIndex: { type: Number, required: true },
+    endIndex: { type: Number, required: true},
 }); 
 
 const Column = mongoose.Schema({
     name: { type: String, required: true },
-    type: { type: String, enum: ["dimension", "FACT"], required: true },
-    positions: [position], // Position is a inbuilt function, so used position
+    type: { type: String, enum: ["Description","ID","Time"], required: true },
+    positions: [positionDel || positionFixed ], // Position is a inbuilt function, so used position
     dataType: { type: String, enum: ["int", "float", "Double","String"], required: true },
     oldName: {type:String, required: false }
 });

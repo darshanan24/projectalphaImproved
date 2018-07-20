@@ -1,11 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
-//const query = require('url').query;
-
+const checkAuth = require("../../config/check_auth")
 const Project = require("../models/project");
 
-router.get("/projects/v1", (req, res, next) => {
+router.get("/projects/v1", checkAuth, (req, res, next) => {
     Project.find()
         .exec()
         .then(docs => {
@@ -37,7 +36,7 @@ router.get("/projects/v1", (req, res, next) => {
         });
 });
 
-router.get("/project/v1", (req, res, next) => {
+router.get("/project/v1",  checkAuth, (req, res, next) => {
     const name = req.query.name;
     Project.find({ 'name': name })
         .exec()
@@ -53,7 +52,7 @@ router.get("/project/v1", (req, res, next) => {
         });
 });
  
-router.post("/projects/v1", (req, res, next) => {
+router.post("/projects/v1", checkAuth, (req, res, next) => {
     const project = new Project({
         _id: new mongoose.Types.ObjectId(),
         name: req.body.name,
@@ -90,7 +89,7 @@ router.post("/projects/v1", (req, res, next) => {
         });
 });
 
-router.get("/project/v1/:projectId", (req, res, next) => {
+router.get("/project/v1/:projectId", checkAuth, (req, res, next) => {
     const id = req.params.projectId;
     Project.findById(id)
         .exec()
@@ -112,7 +111,7 @@ router.get("/project/v1/:projectId", (req, res, next) => {
 });
 
 
-router.delete("/project/v1/:projectId", (req, res, next) => {
+router.delete("/project/v1/:projectId", checkAuth, (req, res, next) => {
     const id = req.params.projectId;
     Project.remove({ _id: id })
         .exec()
@@ -135,7 +134,7 @@ router.delete("/project/v1/:projectId", (req, res, next) => {
  
 
 
-router.post("/project/v1/:projectId/addEDC", (req, res, next) => {
+router.post("/project/v1/:projectId/addEDC", checkAuth, (req, res, next) => {
     const id = req.params.projectId;
     const updateOps = {};
     for (const ops of req.body) {
