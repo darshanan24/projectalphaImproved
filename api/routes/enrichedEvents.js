@@ -1,12 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
-
+const checkAuth = require("../../config/check_auth");
 const Project = require("../models/project");
 const EnrichedEvent = require("../models/enrichedEvent");
 const shell = require("shelljs");
 
-router.get("/:projectId/events/enriched", (req, res, next) => {
+router.get("/:projectId/events/enriched",checkAuth,  (req, res, next) => {
     const projectId = req.params.projectId;
     console.log(projectId);
     EnrichedEvent.find({"projectId" :projectId})
@@ -44,7 +44,7 @@ router.get("/:projectId/events/enriched", (req, res, next) => {
  
 
 
-router.post("/:projectId/events/enriched", (req, res, next) => {
+router.post("/:projectId/events/enriched", checkAuth, (req, res, next) => {
     const enrichedEvent = new EnrichedEvent({
         _id: mongoose.Types.ObjectId(),
         name: req.body.name,
@@ -101,7 +101,7 @@ router.post("/:projectId/events/enriched", (req, res, next) => {
         });
 });
 
-router.get("/:projectId/event/enriched/:enrichedEventId", (req, res, next) => {
+router.get("/:projectId/event/enriched/:enrichedEventId", checkAuth, (req, res, next) => {
     const projectId = req.params.projectId;
     const id = req.params.enrichedEventId;
     console.log("---------" + projectId);
@@ -137,7 +137,7 @@ router.get("/:projectId/event/enriched/:enrichedEventId", (req, res, next) => {
 
 
 
-router.delete("/:projectId/event/enriched/:enrichedEventId", (req, res, next) => {
+router.delete("/:projectId/event/enriched/:enrichedEventId", checkAuth, (req, res, next) => {
     const enrichedEventId = req.params.enrichedEventId;
     const projectId= req.params.projectId;
     console.log(enrichedEventId);
@@ -174,7 +174,7 @@ router.delete("/:projectId/event/enriched/:enrichedEventId", (req, res, next) =>
         });
 });
 
-router.get("/:projectId/event/enriched", (req, res, next) => {
+router.get("/:projectId/event/enriched", checkAuth, (req, res, next) => {
     const projectId = req.params.projectId;
     const name = req.query.name;
     console.log(projectId);

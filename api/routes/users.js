@@ -8,18 +8,18 @@ const User = require("../models/user");
 
 router.post("/signup", (req, res, next) => {
   if (req.body.password !== req.body.passwordConfirm) {
-    var err = new Error('Passwords do not match.');
-    err.status = 400;
-    res.send("passwords dont match");
+    res.status(400).json({
+    message: "Passwords do not match"
+    });
     return next(err);
   }
 
-  User.find({ email: req.body.email })
+  User.find({ username: req.body.username })
     .exec()
     .then(user => {
       if (user.length >= 1) {
         return res.status(409).json({
-          message: "Mail exists"
+          message: "Username already exists"
         });
       } else {
         bcrypt.hash(req.body.password, 10, (err, hash) => {
@@ -55,7 +55,7 @@ router.post("/signup", (req, res, next) => {
 });
 
 router.post("/login", (req, res, next) => {
-  User.find({ email: req.body.email })
+  User.find({ username: req.body.username })
     .exec()
     .then(user => {
       if (user.length < 1) {
@@ -72,6 +72,7 @@ router.post("/login", (req, res, next) => {
         if (result) {
           const token = jwt.sign(
             {
+              username: user[0].username,
               email: user[0].email,
               userId: user[0]._id
             },

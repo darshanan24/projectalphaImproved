@@ -1,13 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
-
+const checkAuth = require("../../config/check_auth");
 //schema models to follow
 const Project = require("../models/project");
 const DataSource = require("../models/dataSource");
 
 
-router.get("/:projectId/datasources", (req, res, next) => {
+router.get("/:projectId/datasources",checkAuth, (req, res, next) => {
     const projectId = req.params.projectId;
     console.log(projectId);
        DataSource.find({"projectId" :projectId})
@@ -35,7 +35,7 @@ router.get("/:projectId/datasources", (req, res, next) => {
 });
 
 
-router.post("/:projectId/datasources", (req, res) => {
+router.post("/:projectId/datasources", checkAuth, (req, res) => {
     const dataSource = new DataSource({
             _id: new mongoose.Types.ObjectId(),
                 name: req.body.name,
@@ -77,7 +77,7 @@ router.post("/:projectId/datasources", (req, res) => {
 
 
 
-router.get("/:projectId/datasource/:datasourceId", (req, res, next) => {
+router.get("/:projectId/datasource/:datasourceId", checkAuth, (req, res, next) => {
     const projectId = req.params.projectId;
     const id = req.params.datasourceId;
     console.log(id);
@@ -110,7 +110,7 @@ router.get("/:projectId/datasource/:datasourceId", (req, res, next) => {
 
 
 
-router.get("/:projectId/datasource", (req, res, next) => {
+router.get("/:projectId/datasource", checkAuth, (req, res, next) => {
     const projectId = req.params.projectId;
     const name = req.query.name;
     console.log(projectId);
@@ -147,7 +147,7 @@ router.get("/:projectId/datasource", (req, res, next) => {
 
 
 
-router.delete("/:projectId/datasource/:datasourceId", (req, res, next) => {
+router.delete("/:projectId/datasource/:datasourceId", checkAuth, (req, res, next) => {
     const datasourceId = req.params.datasourceId;
     const projectId= req.params.projectId;
     console.log(projectId);

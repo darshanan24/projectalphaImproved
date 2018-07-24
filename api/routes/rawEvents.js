@@ -1,13 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
-
+const checkAuth = require("../../config/check_auth");
 //schema models to follow
 const Project = require("../models/project");
 const RawEvent = require("../models/rawEvent");
 
 //handling get requests
-router.get("/:projectId/events/raw", (req, res, next) => {
+router.get("/:projectId/events/raw", checkAuth, (req, res, next) => {
     const projectId = req.params.projectId;
     console.log(projectId);
        RawEvent.find({"projectId" :projectId})
@@ -35,7 +35,7 @@ router.get("/:projectId/events/raw", (req, res, next) => {
 });
 
 
-router.post("/:projectId/events/raw", (req, res) => {
+router.post("/:projectId/events/raw", checkAuth, (req, res) => {
     const rawEvent = new RawEvent({
             _id: new mongoose.Types.ObjectId(),
                 name: req.body.name,
@@ -83,7 +83,7 @@ router.post("/:projectId/events/raw", (req, res) => {
 
 
 
-router.get("/:projectId/event/raw/:rawEventId", (req, res, next) => {
+router.get("/:projectId/event/raw/:rawEventId", checkAuth, (req, res, next) => {
     const projectId = req.params.projectId;
     const id = req.params.rawEventId;
     Project.findById(projectId)
@@ -133,7 +133,7 @@ router.patch("/:rawEventId", (req, res, next) => {
 });
 */
 
-router.delete("/:projectId/event/raw/:rawEventId", (req, res, next) => {
+router.delete("/:projectId/event/raw/:rawEventId", checkAuth, (req, res, next) => {
     const rawEventId = req.params.rawEventId;
     const projectId= req.params.projectId;
     //console.log(enrichedEventId);
@@ -172,7 +172,7 @@ router.delete("/:projectId/event/raw/:rawEventId", (req, res, next) => {
 
 
 
-router.get("/:projectId/event/raw", (req, res, next) => {
+router.get("/:projectId/event/raw", checkAuth, (req, res, next) => {
     const projectId = req.params.projectId;
     const name = req.query.name;
     console.log(projectId);
