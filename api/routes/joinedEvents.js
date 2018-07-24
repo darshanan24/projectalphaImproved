@@ -1,12 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
+const checkAuth = require("../../config/check_auth");
 
 const Project = require("../models/project");
 const JoinedEvent = require("../models/joinedEvent");
 const EnrichedEvent = require("../models/enrichedEvent");
 
-router.get("/:projectId/events/joinedEvents", (req, res, next) => {
+router.get("/:projectId/events/joinedEvents", checkAuth, (req, res, next) => {
     const projectId = req.params.projectId;
     console.log(projectId);
     JoinedEvent.find({"projectId" :projectId})
@@ -33,7 +34,7 @@ router.get("/:projectId/events/joinedEvents", (req, res, next) => {
 
 
 
-router.post("/:projectId/events/joinedEvents", (req, res, next) => {
+router.post("/:projectId/events/joinedEvents", checkAuth, (req, res, next) => {
     const joinedEvent = new JoinedEvent({
         _id: mongoose.Types.ObjectId(),
         name: req.body.name,
@@ -75,7 +76,7 @@ router.post("/:projectId/events/joinedEvents", (req, res, next) => {
         });
 });
 
-router.get("/:projectId/events/joinedEvent/:joinedEventId", (req, res, next) => {
+router.get("/:projectId/events/joinedEvent/:joinedEventId",checkAuth,  (req, res, next) => {
     const projectId = req.params.projectId;
     const id = req.params.joinedEventId;
     console.log("---------" + projectId);
@@ -110,7 +111,7 @@ router.get("/:projectId/events/joinedEvent/:joinedEventId", (req, res, next) => 
 });
 
 
-router.delete("/:projectId/events/joinedEvent/:joinedEventId", (req, res, next) => {
+router.delete("/:projectId/events/joinedEvent/:joinedEventId", checkAuth, (req, res, next) => {
     const projectId = req.params.projectId;
     const joinedEventId = req.params.joinedEventId;
     console.log(projectId);
@@ -147,7 +148,7 @@ router.delete("/:projectId/events/joinedEvent/:joinedEventId", (req, res, next) 
 });
 
 
-router.get("/:projectId/events/joinedEvent", (req, res, next) => {
+router.get("/:projectId/events/joinedEvent", checkAuth, (req, res, next) => {
     const projectId = req.params.projectId;
     const name = req.query.name;
     console.log(projectId);

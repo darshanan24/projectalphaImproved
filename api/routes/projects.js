@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
-const checkAuth = require("../../config/check_auth")
+const checkAuth = require("../../config/check_auth");
 const Project = require("../models/project");
 
 router.get("/projects/v1", checkAuth, (req, res, next) => {
