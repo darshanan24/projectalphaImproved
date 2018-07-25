@@ -7,10 +7,11 @@ export const authStart = () => {
   };
 };
 
-export const authSuccess = authData => {
+export const authSuccess = (token, userId) => {
   return {
     type: actionTypes.AUTH_SUCCESS,
-    authData: authData
+    idToken: token,
+    userId: userId
   };
 };
 
@@ -21,7 +22,7 @@ export const authFail = error => {
   };
 };
 
-export const auth = (username, name, email, password, password2, isSignup) => {
+export const auth = (username, email, password, passwordConfirm, isSignup) => {
   return dispatch => {
     dispatch(authStart());
     let url;
@@ -35,12 +36,11 @@ export const auth = (username, name, email, password, password2, isSignup) => {
     } else {
       authData = {
         username: username,
-        name: name,
         email: email,
         password: password,
-        password2: password2
+        passwordConfirm: passwordConfirm
       };
-      url = 'http://localhost:3330/user/register';
+      url = 'http://localhost:3330/user/signup';
     }
 
     axios
@@ -48,7 +48,7 @@ export const auth = (username, name, email, password, password2, isSignup) => {
       .then(response => {
         console.log('Sucessful');
         console.log(response);
-        dispatch(authSuccess(response.data));
+        dispatch(authSuccess(response.data.token, response.data.userId));
       })
       .catch(err => {
         console.log('there is an error');

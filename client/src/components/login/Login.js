@@ -22,19 +22,6 @@ class Login extends Component {
         valid: false,
         touched: false
       },
-      name: {
-        elementType: 'input',
-        elementConfig: {
-          type: 'text',
-          placeholder: 'name'
-        },
-        value: '',
-        validation: {
-          required: true
-        },
-        valid: false,
-        touched: false
-      },
       email: {
         elementType: 'input',
         elementConfig: {
@@ -63,7 +50,7 @@ class Login extends Component {
         valid: false,
         touched: false
       },
-      password2: {
+      passwordConfirm: {
         elementType: 'input',
         elementConfig: {
           type: 'password',
@@ -132,11 +119,10 @@ class Login extends Component {
     event.preventDefault();
     this.props.onAuth(
       this.state.controls.username.value,
-      this.state.controls.name.value,
       this.state.controls.email.value,
       this.state.controls.password.value,
-      this.state.controls.password2.value,
-      this.state.isSignup.value
+      this.state.controls.passwordConfirm.value,
+      this.state.isSignup
     );
   };
   switchAuthModeHandler = () => {
@@ -217,9 +203,9 @@ class Login extends Component {
 }
 const mapDispatchToProps = dispatch => {
   return {
-    onAuth: (username, name, email, password, password2, isSignup) =>
+    onAuth: (username, email, password, passwordConfirm, isSignup) =>
       dispatch(
-        actions.auth(username, name, email, password, password2, isSignup)
+        actions.auth(username, email, password, passwordConfirm, isSignup)
       )
   };
 };
