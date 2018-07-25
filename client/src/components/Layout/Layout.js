@@ -4,6 +4,7 @@ import './Layout.css';
 import Header from '../Navigation/header/Header';
 import SideDrawer from '../Navigation/SideDrawer/SideDrawer';
 import { BrowserRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 class Layout extends Component {
   state = {
@@ -36,4 +37,10 @@ class Layout extends Component {
   }
 }
 
-export default Layout;
+const mapStateToProps = state => {
+  return {
+    isAuthenticated: state.auth.token != null
+  };
+};
+
+export default connect(mapStateToProps)(Layout);

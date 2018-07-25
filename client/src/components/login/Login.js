@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import './Login.css';
 import Input from '../UI/Input/Input';
 import Logo from '../Navigation/header/logo/Logo';
+import Spinner from '../UI/Spinner/Spinner';
 import Button from '../Button/Button';
 import * as actions from '../../store/actions';
 
@@ -151,7 +152,7 @@ class Login extends Component {
       });
     }
 
-    const form = formElementsArray.map(formElement => (
+    let form = formElementsArray.map(formElement => (
       <div>
         <Input
           key={formElement.id}
@@ -166,6 +167,16 @@ class Login extends Component {
         <br />
       </div>
     ));
+
+    if (this.props.loading) {
+      form = <Spinner />;
+    }
+
+    let errorMessage = null;
+    if (this.props.error) {
+      errorMessage = <p>{this.props.error}</p>;
+    }
+
     return (
       <div className="container">
         <div className="login-screen row align-items-center">
@@ -173,6 +184,7 @@ class Login extends Component {
             <div className="login-container">
               <div className="row no-gutters">
                 <div className="col-xl-4 col-lg-5 col-md-6 col-sm-12">
+                  {errorMessage}
                   <div className="login-box">
                     <form onSubmit={this.submitHandler}>
                       {form}
@@ -201,6 +213,13 @@ class Login extends Component {
     );
   }
 }
+const mapStateToProps = state => {
+  return {
+    loading: state.auth.loading,
+    error: state.auth.error
+  };
+};
+
 const mapDispatchToProps = dispatch => {
   return {
     onAuth: (username, email, password, passwordConfirm, isSignup) =>
@@ -211,6 +230,6 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(Login);
