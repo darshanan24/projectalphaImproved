@@ -5,7 +5,8 @@ const checkAuth = require("../../config/check_auth");
 const Project = require("../models/project");
 const EnrichedEvent = require("../models/enrichedEvent");
 const shell = require("shelljs");
-
+//const vipul = require("../routes/vipul.sh");
+const { execFile } = require('child_process');
 router.get("/:projectId/events/enriched",checkAuth,  (req, res, next) => {
     const projectId = req.params.projectId;
     console.log(projectId);
@@ -91,6 +92,15 @@ router.post("/:projectId/events/enriched", checkAuth, (req, res, next) => {
             const topic = "/opt/kafka_2.11-1.0.0/bin/kafka-topics.sh --create --zookeeper " + host +" --replication-factor 1 --partitions 1 --topic " + result.name;
             shell.exec(topic);
             shell.exec('/opt/kafka_2.11-1.0.0/bin/kafka-topics.sh --list --zookeeper ' + host);
+            /* //execFile('sh /Desktop/projectalpha/api/routes/vipul.sh',  (error, stdout, stderr) => {
+             if (error) {
+              throw error;
+            }
+            console.log(stdout);
+          }) */
+           shell.exec('~/Desktop/projectalpha/api/routes/vipul.sh'); //just checking version1
+            console.log("I'm here");
+
 
         })
         .catch(err => {
