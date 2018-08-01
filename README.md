@@ -10,8 +10,15 @@ THe flow goes like this:
 1. signup a user 
 2. login a user to get jwt token
 3. Once you get jwt token, you can access all the apis.
-4. create a Project, by using Post method on /projects/v1
-5.create raw events, /project/v1/<projectID>/events/raw, 
+4. create a Project, by using Post method on /projects/v1.
+5. create raw events, /project/v1/<projectID>/events/raw 
 6. create enriched events, /project/v1/<projectID>/events/enriched
   6.1. creating enrichedEvents should also Post data to livy calls,to execute spark jobs. In my code its axios.js file 
-  consists of function to Post the rest call for livy.  
+  consists of function to Post the rest call for livy.
+  
+Hi VAL,
+
+If you dont understand Anything or anywhere in my code, please notice me.
+
+Thank you so much,
+Darshan
