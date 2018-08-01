@@ -4,9 +4,8 @@ const mongoose = require("mongoose");
 const checkAuth = require("../../config/check_auth");
 const Project = require("../models/project");
 const EnrichedEvent = require("../models/enrichedEvent");
-const shell = require("shelljs");
-//const vipul = require("../routes/vipul.sh");
-const { execFile } = require('child_process');
+//const axios = require("../routes/axios")
+
 router.get("/:projectId/events/enriched",checkAuth,  (req, res, next) => {
     const projectId = req.params.projectId;
     console.log(projectId);
@@ -41,11 +40,8 @@ router.get("/:projectId/events/enriched",checkAuth,  (req, res, next) => {
 });
 
 
-            
- 
 
-
-router.post("/:projectId/events/enriched", checkAuth, (req, res, next) => {
+router.post("/:projectId/events/enriched", checkAuth,  (req, res, next) => {
     const enrichedEvent = new EnrichedEvent({
         _id: mongoose.Types.ObjectId(),
         name: req.body.name,
@@ -60,8 +56,7 @@ router.post("/:projectId/events/enriched", checkAuth, (req, res, next) => {
         positions: req.body.positions
 
     });
-
-    return enrichedEvent.save()
+    enrichedEvent.save()
         .then(result => {
             console.log(result);
             res.status(201).json({
@@ -81,28 +76,12 @@ router.post("/:projectId/events/enriched", checkAuth, (req, res, next) => {
                 }
             });
 
-            console.log("projectid " +result.projectId );
-
             Project.findOneAndUpdate({ _id: result.projectId},
-                { $push: { enrichedEvents:  result._id} },
-              );   
-            //KafkaCreateTopic(result.name);
-            console.log(result.name);
-            const host = "localhost:2181";
-            const topic = "/opt/kafka_2.11-1.0.0/bin/kafka-topics.sh --create --zookeeper " + host +" --replication-factor 1 --partitions 1 --topic " + result.name;
-            shell.exec(topic);
-            shell.exec('/opt/kafka_2.11-1.0.0/bin/kafka-topics.sh --list --zookeeper ' + host);
-            /* //execFile('sh /Desktop/projectalpha/api/routes/vipul.sh',  (error, stdout, stderr) => {
-             if (error) {
-              throw error;
-            }
-            console.log(stdout);
-          }) */
-           shell.exec('~/Desktop/projectalpha/api/routes/vipul.sh'); //just checking version1
-            console.log("I'm here");
-
-
+                { $push: { enrichedEvents:  result._id} });   
+           
         })
+        
+        
         .catch(err => {
             console.log(err);
             res.status(500).json({
@@ -110,6 +89,9 @@ router.post("/:projectId/events/enriched", checkAuth, (req, res, next) => {
             });
         });
 });
+    
+
+
 
 router.get("/:projectId/event/enriched/:enrichedEventId", checkAuth, (req, res, next) => {
     const projectId = req.params.projectId;

@@ -13,7 +13,6 @@ const dataSourcesRoutes = require("./api/routes/dataSources")
 const joinedEventRoutes = require("./api/routes/joinedEvents")
 const userRoutes = require("./api/routes/users");
 const config = require('./config/database');
-
 mongoose.connect(config.database);
 let db = mongoose.connection;
 
